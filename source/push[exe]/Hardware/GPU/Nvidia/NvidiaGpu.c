@@ -93,7 +93,8 @@ UINT16 NvidiaGpu_GetMemoryClock()
 
 UINT8 NvidiaGpu_GetTemperature()
 {
-    return ReadGpuRegister(0x20400);
+    //return ReadGpuRegister(0x20400);
+	return Nvapi_GetTemperature();
 }
 
 
@@ -111,7 +112,7 @@ UINT64 NvidiaGpu_GetFreeMemory()
 
 UINT8 NvidiaGpu_GetLoad()
 {
-    return OpenNvapi_GetLoad();
+    return Nvapi_GetLoad();
 }
 
 
@@ -138,7 +139,14 @@ UINT16 NvidiaGpu_GetVoltage()
     return Nvapi_GetVoltage();
 }
 
+
 UINT16 NvidiaGpu_GetFanSpeed()
 {
     return Nvapi_GetFanSpeed();
+}
+
+
+UINT16 NvidiaGpu_GetFanDutyCycle()
+{
+	return Nvapi_GetFanDutyCycle();
 }
