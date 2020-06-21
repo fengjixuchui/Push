@@ -511,7 +511,7 @@ int __stdcall GetSystemMetrics(
 
 int MonitorWidth;
 int MonitorHeight;
-
+#include "..\Hardware\GPU\fan.h"
 
 VOID GetHardwareInfo()
 {
@@ -531,6 +531,13 @@ VOID GetHardwareInfo()
     PushSharedMemory->HarwareInformation.DisplayDevice.EngineClockMax = GPU_GetMaximumEngineClock();
     PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClockMax = GPU_GetMaximumMemoryClock();
     PushSharedMemory->HarwareInformation.DisplayDevice.VoltageMax = GPU_GetMaximumVoltage();
+
+	Log(L"E: %i", PushSharedMemory->HarwareInformation.DisplayDevice.EngineClockMax);
+	Log(L"M: %i", PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClockMax);
+
+	//Only implimented auto-fan control for Nvidia hardware D:
+	if (PushSharedMemory->HarwareInformation.DisplayDevice.VendorId == NVIDIA)
+		InitializeFanSettings();
 
     if (Ini_ReadBoolean(L"Settings", L"GpuUsageD3DKMT", FALSE, L".\\" PUSH_SETTINGS_FILE))
         PushGpuLoadD3DKMT = TRUE;
@@ -620,6 +627,10 @@ VOID RefreshHardwareInfo()
 
     DDCCIGetVCPFeature(MonitorHandles[1], VCP_BRIGHTNESS, NULL, &brightness, NULL);
     PushSharedMemory->HarwareInformation.Display.Brightness = brightness;
+
+	//Only implimented auto-fan control for Nvidia hardware D:
+	if (PushSharedMemory->HarwareInformation.DisplayDevice.VendorId == NVIDIA)
+		UpdateFanSpeed();
 }
 
 

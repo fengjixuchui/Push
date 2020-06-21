@@ -71,8 +71,9 @@ UINT16 NvidiaGpu_GetEngineClock()
         return nva8_get_core_clock();
     case 0x50:
         return nv50_get_core_clock();
+	case 0xE4:
     default:
-        return 0;
+		return Nvapi_GetEngineClock();
     }
 }
 
@@ -85,8 +86,9 @@ UINT16 NvidiaGpu_GetMemoryClock()
         return nva8_get_memory_clock();
     case 0x50:
         return nv50_get_memory_clock();
+	case 0xE4:
     default:
-        return 0;
+        return Nvapi_GetMemoryClock();
     }
 }
 
@@ -100,13 +102,15 @@ UINT8 NvidiaGpu_GetTemperature()
 
 UINT64 NvidiaGpu_GetTotalMemory()
 {
-    return ReadGpuRegister(0x10020c);
+    //return ReadGpuRegister(0x10020c);
+	return Nvapi_GetTotalMemory();
 }
 
 
 UINT64 NvidiaGpu_GetFreeMemory()
 {
-    return OpenNvapi_GetFreeMemory();
+    //return OpenNvapi_GetFreeMemory();
+	return Nvapi_GetFreeMemory();
 }
 
 
@@ -118,13 +122,13 @@ UINT8 NvidiaGpu_GetLoad()
 
 UINT16 NvidiaGpu_GetEngineClockMax()
 {
-    return Nvapi_GetMaxEngineClock();
+    return Nvapi_GetBaseEngineClock();
 }
 
 
 UINT16 NvidiaGpu_GetMemoryClockMax()
 {
-    return Nvapi_GetMaxMemoryClock();
+    return Nvapi_GetBaseMemoryClock();
 }
 
 
@@ -149,4 +153,10 @@ UINT16 NvidiaGpu_GetFanSpeed()
 UINT16 NvidiaGpu_GetFanDutyCycle()
 {
 	return Nvapi_GetFanDutyCycle();
+}
+
+
+VOID NvidiaGpu_SetFanDutyCycle( int DutyCycle )
+{
+	Nvapi_SetFanDutyCycle(DutyCycle);
 }

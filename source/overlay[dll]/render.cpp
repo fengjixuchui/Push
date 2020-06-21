@@ -159,6 +159,12 @@ VOID RunFrameStatistics()
 
     if (frameTime > acceptableFrameTime)
     {
+		if (PushSharedMemory->HarwareInformation.DisplayDevice.Load > 95)
+		{
+			PushSharedMemory->OSDFlags |= OSD_GPU_E_CLK;
+			PushSharedMemory->OSDFlags |= OSD_GPU_M_CLK;
+		}
+
         if (PushSharedMemory->HarwareInformation.Processor.Load > 95)
             PushSharedMemory->Overloads |= OSD_CPU_LOAD;
 
@@ -289,10 +295,10 @@ VOID RnRender( OvOverlay* Overlay )
 
         InitializeKeyboardHook();
 
-        COMMAND_HEADER cmdBuffer;
-        cmdBuffer.CommandIndex= CMD_STARTHWMON;
-        cmdBuffer.ProcessId = GetCurrentProcessId();
-        CallPipe((BYTE*) &cmdBuffer, sizeof(cmdBuffer), NULL);
+        COMMAND_HEADER cmdBufferr;
+        cmdBufferr.CommandIndex= CMD_STARTHWMON;
+        cmdBufferr.ProcessId = GetCurrentProcessId();
+        CallPipe((BYTE*) &cmdBufferr, sizeof(cmdBufferr), NULL);
     }
 
     Osd_Draw( Overlay );

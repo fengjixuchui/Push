@@ -249,3 +249,19 @@ VOID GPU_SetVoltage( int Millivolts )
     default:;
     }
 }
+
+
+VOID GPU_SetFanDutyCycle( int DutyCycle )
+{
+	switch (GPU_VendorId)
+	{
+	case AMD:
+		Adl_SetFanDutyCycle(DutyCycle);
+		break;
+	case NVIDIA:
+		NvidiaGpu_SetFanDutyCycle(DutyCycle);
+		break;
+	default:
+		break;
+	}
+}
