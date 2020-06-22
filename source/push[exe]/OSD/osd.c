@@ -7,29 +7,18 @@
 
 int NumberOfItems;
 
+
 typedef enum CPU_CALC_INDEX
 {
-    CPU_CALC_twc,
-    CPU_CALC_t,
-    CPU_CALC_o,
-    CPU_CALC_c
+    CPU_CALC_twc,   //highest thread usage, with wait cycles stripped. [Default]
+    CPU_CALC_t,     //highest thread usage
+    CPU_CALC_o,     //overall cpu usage (all cores)
+    CPU_CALC_c      //highest core usage
 
 } CPU_CALC_INDEX;
+
+
 CPU_CALC_INDEX CPUStrap = CPU_CALC_twc;/*CPU_CALC_o;*/
-
-/*VOID FormatDiskReadWriteRate(
-    UINT32 Value,
-    WCHAR* Buffer
-    );
-
-VOID FormatTime(
-    UINT32 Value,
-    WCHAR* Buffer
-    );*/
-
-//typedef VOID(*OSD_DYNAMIC_FORMAT)(OSD_ITEM* Value);
-
-
 OSD_ITEM* OsdItems;
 
 
@@ -44,7 +33,7 @@ VOID FormatDiskReadWriteRate( OSD_ITEM* Item )
     UINT32 rate;
     WCHAR *format;
 
-	rate = Item->Value2;
+    rate = Item->Value2;
 
     format = L"DSK : %i B/s";
 
@@ -65,24 +54,24 @@ VOID FormatDiskReadWriteRate( OSD_ITEM* Item )
 
 VOID FormatGpuClocks( OSD_ITEM* Item )
 {
-	WCHAR *format;
-	float percentage;
+    WCHAR *format;
+    float percentage;
 
-	if (Item->Flag == OSD_GPU_E_CLK)
-	{
-		format = L"GPU-e : %i MHz (%i %%)";
-		percentage = ((float)PushSharedMemory->HarwareInformation.DisplayDevice.EngineClock / 
-			(float)PushSharedMemory->HarwareInformation.DisplayDevice.EngineClockMax) * 100.0f;
-	}
-		
-	else if (Item->Flag == OSD_GPU_M_CLK)
-	{
-		format = L"GPU-m : %i MHz (%i %%)";
-		percentage = ((float)PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClock / 
-			(float)PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClockMax) * 100.0f;
-	}
-		
-	String_Format(Item->Text, MAX_OSD_TEXT_LEN, format, Item->Value, (int)percentage);
+    if (Item->Flag == OSD_GPU_E_CLK)
+    {
+        format = L"GPU-e : %i MHz (%i %%)";
+        percentage = ((float)PushSharedMemory->HarwareInformation.DisplayDevice.EngineClock / 
+            (float)PushSharedMemory->HarwareInformation.DisplayDevice.EngineClockMax) * 100.0f;
+    }
+        
+    else if (Item->Flag == OSD_GPU_M_CLK)
+    {
+        format = L"GPU-m : %i MHz (%i %%)";
+        percentage = ((float)PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClock / 
+            (float)PushSharedMemory->HarwareInformation.DisplayDevice.MemoryClockMax) * 100.0f;
+    }
+        
+    String_Format(Item->Text, MAX_OSD_TEXT_LEN, format, Item->Value, (int)percentage);
 }
 
 
@@ -158,8 +147,8 @@ VOID OSD_Refresh()
             osdItem->Triggered = TRUE;
             osdItem->Queue = TRUE;
 
-			//DynamicFormat = When formatting has to happen at run-time depending on the value, i.e. OSD_DISK => MBs=>KBs
-			//DisplayFormat = Standard formatting that most items use.
+            //DynamicFormat = When formatting has to happen at run-time depending on the value, i.e. OSD_DISK => MB/s=>kB/s
+            //DisplayFormat = Standard formatting that most items use.
 
             if (osdItem->DisplayFormatPtr || osdItem->DynamicFormatPtr)
             {
@@ -170,7 +159,7 @@ VOID OSD_Refresh()
                     dynamicFormat = (OSD_DYNAMIC_FORMAT) osdItem->DynamicFormatPtr;
 
                     //dynamicFormat(osdItem->Value2 ? osdItem->Value2 : 0, osdItem->Text);
-					dynamicFormat(osdItem);
+                    dynamicFormat(osdItem);
 
                     String_Concatenate(osdItem->Text, L"\n");
                 }
@@ -179,12 +168,12 @@ VOID OSD_Refresh()
                     wchar_t buffer[260];
                     int charactersWritten;
 
-					charactersWritten = String_Format(
-						buffer,
-						260,
-						(WCHAR*)osdItem->DisplayFormatPtr,
-						osdItem->Value2 ? osdItem->Value2 : osdItem->Value
-						);
+                    charactersWritten = String_Format(
+                        buffer,
+                        260,
+                        (WCHAR*)osdItem->DisplayFormatPtr,
+                        osdItem->Value2 ? osdItem->Value2 : osdItem->Value
+                        );
 
                     String_CopyN(osdItem->Text, buffer, MAX_OSD_TEXT_LEN);
 
